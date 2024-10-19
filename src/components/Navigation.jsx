@@ -1,19 +1,35 @@
-import React from 'react'
+import React from "react";
 
 function Navigation() {
   return (
-    <nav className = 'bg-purple-400 flex justify-between items-center px-20 h-20'>
-        <div className = "logo" font-bold>Passop</div>
+    <nav className="bg-black flex justify-between items-center px-20 h-20 text-white">
+      {/* Logo Design */}
+      
+      <div className="logo font-bold text-white text-2xl" font-bold>
+        <span className="text-green-500">&lt;</span>
+        Pass
+        <span className="text-green-500">OP&gt;</span>
+      </div>
+
+      {/* NavBar */}
       <ul>
-        <li className = 'flex gap-4'>
-            <a className='hover:font-bold'href="#">Home</a>
-            <a className='hover:font-bold'href="#">About Us</a>
-            <a className='hover:font-bold'href="#">Services</a>
-            <a className='hover:font-bold'href="#">Contact</a>
+        <li className="flex gap-4">
+          <a className="hover:font-bold" href="#">
+            Home
+          </a>
+          <a className="hover:font-bold" href="#">
+            About Us
+          </a>
+          <a className="hover:font-bold" href="#">
+            Services
+          </a>
+          <a className="hover:font-bold" href="#">
+            Contact
+          </a>
         </li>
       </ul>
     </nav>
-  )
+  );
 }
 
-export default Navigation
+export default Navigation;
