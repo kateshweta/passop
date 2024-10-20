@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { v4 as uuidv4 } from "uuid";
+uuidv4();
 
 const Manager = () => {
   const ref = useRef();
+  const passwordRef = useRef();
   const [form, setform] = useState({ site: "", username: "", password: "" });
 
   const [passwordArray, setPasswordArray] = useState([]);
@@ -14,13 +19,31 @@ const Manager = () => {
     }
   }, []);
 
+  //copy text
+
+  const copyText = (text) => {
+    toast("Copied to Clipboard!", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    navigator.clipboard.writeText(text);
+  };
+
   const showPassword = () => {
-    alert("Show the Password");
+    passwordRef.current.type = "text";
     console.log(ref.current.src);
 
     if (ref.current.src.includes("icons/hidden.png")) {
       ref.current.src = "icons/eye.png";
+      passwordRef.current.type = "text";
     } else {
+      passwordRef.current.type = "password";
       ref.current.src = "icons/hidden.png";
     }
   };
@@ -28,9 +51,51 @@ const Manager = () => {
   // save password func
 
   const savePassword = () => {
-    setPasswordArray([...passwordArray, form]);
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
+    toast("Password Saved", {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    setPasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
+    localStorage.setItem(
+      "passwords",
+      JSON.stringify([...passwordArray, { ...form, id: uuidv4() }])
+    );
     console.log([...passwordArray, form]);
+    setform[{ site: "", username: "", password: "" }];
+  };
+
+  const deletePassword = (id) => {
+    console.log("Deleting pass with id", id);
+    let c = confirm("Do you really want to delete this password?");
+    if (c) {
+      setPasswordArray(passwordArray.filter((item) => item.id !== id));
+      localStorage.setItem(
+        "passwords",
+        JSON.stringify(passwordArray.filter((item) => item.id !== id))
+      );
+      toast("Password deleted Successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+  };
+
+  const editPassword = (id) => {
+    console.log("Editing pass with id", id);
+    setform(passwordArray.filter((i) => i.id === id)[0]);
+    setPasswordArray(passwordArray.filter((item) => item.id !== id));
   };
 
   const handleChange = (e) => {
@@ -39,6 +104,20 @@ const Manager = () => {
 
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
+      {/* Same as */}
+      <ToastContainer />
       <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]">
         {/* Below Navbar */}
         <div className="mycontainer">
@@ -61,7 +140,7 @@ const Manager = () => {
               className="rounded-full border-green-600 w-full p-4 py-1 text-black"
               type="text"
               name="site"
-              id=""
+              id="#site"
             />
 
             <div className="flex w-full justify-between gap-8">
@@ -72,18 +151,19 @@ const Manager = () => {
                 className="rounded-full border-green-600 w-full p-4 py-1 text-black"
                 type="text"
                 name="username"
-                id=""
+                id="#username"
               />
 
               <div className="relative">
                 <input
+                  ref={passwordRef}
                   value={form.password}
                   onChange={handleChange}
                   placeholder="Enter Password"
                   className="rounded-full border-green-600 w-full p-4 py-1 text-black"
-                  type="text"
+                  type="password"
                   name="password"
-                  id=""
+                  id="#password"
                 />
                 <span
                   className="absolute right-0 text-white top-0 cursor-pointer"
@@ -103,13 +183,15 @@ const Manager = () => {
             {/* Button */}
             <button
               onClick={savePassword}
-              className="flex justify-center gap-2 items-center bg-green-600 rounded-full text-black px-4 py-3 w-fit hover:bg-green-800"
+              className="flex justify-center gap-2 items-center bg-green-600 rounded-full text-black px-4 py-3 w-fit hover:bg-green-800 font-semibold"
             >
-              <lord-icon
-                src="https://cdn.lordicon.com/jgnvfzqg.json"
-                trigger="hover"
-              ></lord-icon>
-              Add Password
+              <img
+                className="cursor-pointer p-1.5"
+                width={35}
+                src="icons/save.png"
+                alt="save"
+              />
+              Save Password
             </button>
           </div>
 
@@ -125,17 +207,83 @@ const Manager = () => {
                   <th className="py-2">Site</th>
                   <th className="py-2">Username</th>
                   <th className="py-2">Password</th>
+                  <th className="py-2">Action</th>
                 </tr>
               </thead>
               <tbody className="bg-indigo-800">
                 {passwordArray.map((item, index) => {
                   return (
                     <tr key={index}>
-                      <td className="py-2 border text-center w-32"><a href={item.site} target="_blank">{item.site}</a>
+                      <td className="py-2 border text-center">
+                        <div className="flex items-center justify-center">
+                          <a href={item.site} target="_blank">
+                            {item.site}
+                          </a>
+                          <img
+                            onClick={() => {
+                              copyText(item.site);
+                            }}
+                            className=" cursor-pointer p-1.5"
+                            width={35}
+                            src="icons/copy.png"
+                            alt=""
+                          />
+                        </div>
                       </td>
-                      <td className="py-2 border text-center w-32">{item.username}
+                      <td className="py-2 border text-center">
+                        <div className="flex items-center justify-center">
+                          {item.username}
+                          <img
+                            onClick={() => {
+                              copyText(item.username);
+                            }}
+                            className=" cursor-pointer p-1.5"
+                            width={35}
+                            src="icons/copy.png"
+                            alt=""
+                          />
+                        </div>
                       </td>
-                      <td className="py-2 border text-center w-32">{item.password}</td>
+                      <td className="py-2 border text-center ">
+                        <div className="flex items-center justify-center">
+                          {item.password}
+                          <img
+                            onClick={() => {
+                              copyText(item.password);
+                            }}
+                            className=" cursor-pointer p-1.5"
+                            width={35}
+                            src="icons/copy.png"
+                            alt=""
+                          />
+                        </div>
+                      </td>
+
+                      {/* Action */}
+                      <td className="flex justify-center  py-2 border text-center ">
+                        <span>
+                          <img
+                            className="cursor-pointer p-1.5"
+                            onClick={() => {
+                              editPassword(item.id);
+                            }}
+                            width={35}
+                            src="icons/editing.png"
+                            alt="edit"
+                          />
+                        </span>
+                        <span>
+                          <img
+                            className="cursor-pointer p-1.5"
+                            onClick={() => {
+                              deletePassword(item.id);
+                            }}
+                            width={35}
+                            src="icons/bin.png"
+                            alt="edit"
+                          />
+                        </span>
+                      </td>
                     </tr>
                   );
                 })}

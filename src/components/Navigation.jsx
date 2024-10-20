@@ -4,7 +4,7 @@ function Navigation() {
   return (
     <nav className="bg-black flex justify-between items-center px-20 h-20 text-white">
       {/* Logo Design */}
-      
+
       <div className="logo font-bold text-white text-2xl" font-bold>
         <span className="text-green-500">&lt;</span>
         Pass
@@ -28,6 +28,14 @@ function Navigation() {
           </a>
         </li>
       </ul>
+
+      <button className="bg-transparent my-5">
+        <img
+          className="filter invert p-1 w-10"
+          src="icons/github.png"
+          alt="github"
+        />
+      </button>
     </nav>
   );
 }
