@@ -5,12 +5,12 @@ const Footer = () =>  {
     <div className='bg-black text-white flex flex-col justify-center items-center fixed bottom-0 w-full'>
       
 
-      <div className="logo font-bold text-white text-2xl " font-bold>
+      <div className="logo p-2 font-bold text-white text-2xl " font-bold>
         <span className="text-green-500">&lt;</span>
         Pass
         <span className="text-green-500">OP&gt;</span>
       </div>
-      <div className="flex">
+      <div className="flex p-1">
         Created by Shweta Kate
       </div>
     </div>

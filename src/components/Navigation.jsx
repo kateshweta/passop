@@ -30,11 +30,17 @@ function Navigation() {
       </ul>
 
       <button className="bg-transparent my-5">
-        <img
-          className="filter invert p-1 w-10"
-          src="icons/github.png"
-          alt="github"
-        />
+        <a
+          href="https://github.com/kateshweta/passop"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <img
+            className="filter invert p-1 w-10"
+            src="icons/github.png"
+            alt="github"
+          />
+        </a>
       </button>
     </nav>
   );
